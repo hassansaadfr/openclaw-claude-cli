@@ -49,7 +49,7 @@ docker build -t openclaw-claude-cli .
 Claude CLI requires authentication via interactive login. From inside the container:
 
 ```bash
-openclaw models auth setup-token --provider anthropic
+openclaw models auth login --provider anthropic --method cli --set-default
 ```
 
-Then follow the prompts to authenticate with your Anthropic/Claude account. The auth token is persisted in the `/data` volume and survives restarts.
+This will open an authentication flow to link your Claude/Anthropic account. The auth token is persisted in the `/data` volume and survives restarts.
