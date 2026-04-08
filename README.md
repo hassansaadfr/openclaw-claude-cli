@@ -80,7 +80,16 @@ A GitHub Actions workflow rebuilds the image weekly (Monday 6am UTC) to pick up 
 
 ## Disclaimer
 
-The billing proxy is an unofficial workaround. Anthropic may change their detection at any time. Use at your own risk.
+This project is provided **for educational and research purposes only**. It is an unofficial, community-driven workaround and is not affiliated with, endorsed by, or supported by Anthropic, OpenClaw, or any of their affiliates.
+
+By using this software, you acknowledge that:
+
+- **You are solely responsible** for your use of this project and for ensuring compliance with Anthropic's [Terms of Service](https://www.anthropic.com/terms) and [Acceptable Use Policy](https://www.anthropic.com/aup).
+- The billing proxy modifies API request routing. Anthropic may change their billing, detection, or authentication mechanisms at any time, which could render this tool non-functional or result in account restrictions.
+- The author(s) of this project **accept no liability** for any damages, account suspensions, billing issues, or other consequences resulting from the use of this software.
+- This project is provided "as is", without warranty of any kind, express or implied.
+
+**If you are unsure whether this tool complies with your service agreement, do not use it.**
 
 ## Credits
 
