@@ -18,6 +18,22 @@ docker compose up -d
 
 The Control UI is available at `http://localhost:18789/#token=YOUR_TOKEN`.
 
+## Authentication
+
+Claude CLI requires a one-time interactive authentication. After starting the container:
+
+```bash
+docker exec -it <container-name> claude
+```
+
+This opens the Claude Code CLI which will prompt you to authenticate via your browser. Once authenticated, the credentials are persisted in the `claude-data` volume and survive restarts.
+
+Then configure OpenClaw to use Claude as the default model:
+
+```bash
+docker exec <container-name> openclaw models auth login --provider anthropic --method cli --set-default
+```
+
 ## Docker Compose
 
 A `docker-compose.yml` is included in this repo. You can also use the image directly:
@@ -34,8 +50,10 @@ services:
       - "8080:8080"
     volumes:
       - openclaw-data:/data
+      - claude-data:/home/node/.claude
 volumes:
   openclaw-data:
+  claude-data:
 ```
 
 ### Volume permissions
@@ -51,16 +69,6 @@ sudo chown -R 1000:1000 /path/to/openclaw-data
 ```bash
 docker build -t openclaw-claude-cli .
 ```
-
-## Authentication
-
-Claude CLI requires authentication via interactive login. From inside the container:
-
-```bash
-openclaw models auth login --provider anthropic --method cli --set-default
-```
-
-This will open an authentication flow to link your Claude/Anthropic account. The auth token is persisted in the `/data` volume and survives restarts.
 
 ## Auto-rebuild
 

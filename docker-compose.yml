@@ -9,5 +9,7 @@ services:
       - "8080:8080"
     volumes:
       - openclaw-data:/data
+      - claude-data:/home/node/.claude
 volumes:
   openclaw-data:
+  claude-data:
