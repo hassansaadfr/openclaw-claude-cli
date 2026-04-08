@@ -1,5 +1,7 @@
 FROM alpine/openclaw:latest
 
+USER root
+
 # Install Claude Code CLI globally
 RUN npm install -g @anthropic-ai/claude-code
 
