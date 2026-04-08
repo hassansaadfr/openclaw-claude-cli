@@ -17,8 +17,6 @@ services:
   openclaw:
     image: ghcr.io/hassansaadfr/openclaw-claude-cli:latest
     user: "1000:1000"
-    environment:
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
     volumes:
       - openclaw-data:/data
     depends_on:
@@ -48,8 +46,10 @@ docker build -t openclaw-claude-cli .
 
 ## Authentication
 
-Set your Anthropic API key via the `ANTHROPIC_API_KEY` environment variable, or configure authentication inside OpenClaw:
+Claude CLI requires authentication via interactive login. From inside the container:
 
 ```bash
 openclaw models auth setup-token --provider anthropic
 ```
+
+Then follow the prompts to authenticate with your Anthropic/Claude account. The auth token is persisted in the `/data` volume and survives restarts.
