@@ -1,0 +1,13 @@
+services:
+  openclaw:
+    image: ghcr.io/hassansaadfr/openclaw-claude-cli:latest
+    user: "1000:1000"
+    environment:
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+    ports:
+      - "18789:18789"
+      - "8080:8080"
+    volumes:
+      - openclaw-data:/data
+volumes:
+  openclaw-data:

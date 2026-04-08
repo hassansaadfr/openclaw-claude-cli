@@ -8,26 +8,34 @@ OpenClaw can use Claude Code CLI as an embedded agent provider. However, install
 
 The image also runs as a non-root user (uid 1000), which is required by Claude CLI when using `--dangerously-skip-permissions`.
 
-## Usage
+## Quick Start
 
-### Docker Compose
+```bash
+cp .env.example .env
+# Edit .env and set your gateway token (or generate one: openssl rand -hex 24)
+docker compose up -d
+```
+
+The Control UI is available at `http://localhost:18789/#token=YOUR_TOKEN`.
+
+## Docker Compose
+
+A `docker-compose.yml` is included in this repo. You can also use the image directly:
 
 ```yaml
 services:
   openclaw:
     image: ghcr.io/hassansaadfr/openclaw-claude-cli:latest
     user: "1000:1000"
+    environment:
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
+    ports:
+      - "18789:18789"
+      - "8080:8080"
     volumes:
       - openclaw-data:/data
-    depends_on:
-      - browser
-  browser:
-    image: coollabsio/openclaw-browser:latest
-    volumes:
-      - browser-data:/config
 volumes:
   openclaw-data:
-  browser-data:
 ```
 
 ### Volume permissions
@@ -53,3 +61,7 @@ openclaw models auth login --provider anthropic --method cli --set-default
 ```
 
 This will open an authentication flow to link your Claude/Anthropic account. The auth token is persisted in the `/data` volume and survives restarts.
+
+## Auto-rebuild
+
+A GitHub Actions workflow rebuilds the image weekly (Monday 6am UTC) to pick up updates from the base image and Claude CLI.
