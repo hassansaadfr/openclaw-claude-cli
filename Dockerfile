@@ -8,6 +8,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     npm install -g @anthropic-ai/claude-code claude-max-api-proxy
 
+# Patch proxy to handle content arrays (OpenClaw sends [{type:"text",text:"..."}])
+COPY patch-content-array.js /tmp/patch-content-array.js
+RUN node /tmp/patch-content-array.js && rm /tmp/patch-content-array.js
+
 # Add custom entrypoint wrapper
 COPY entrypoint-wrapper.sh /usr/local/bin/entrypoint-wrapper.sh
 RUN chmod +x /usr/local/bin/entrypoint-wrapper.sh
