@@ -6,7 +6,7 @@ USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libsecret-1-0 dbus gnome-keyring && \
     rm -rf /var/lib/apt/lists/* && \
-    npm install -g @anthropic-ai/claude-code claude-max-api-proxy
+    npm install -g @anthropic-ai/claude-code @rynfar/meridian
 
 # Add custom entrypoint wrapper
 COPY entrypoint-wrapper.sh /usr/local/bin/entrypoint-wrapper.sh

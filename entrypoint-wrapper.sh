@@ -4,9 +4,9 @@ set -e
 CONFIG_DIR="${OPENCLAW_STATE_DIR:-/home/node/.openclaw}"
 CONFIG_FILE="$CONFIG_DIR/openclaw.json"
 
-# Start claude-max-api proxy in background
-echo "[entrypoint-wrapper] Starting claude-max-api proxy on port 3456..."
-claude-max-api &
+# Start Meridian proxy in background
+echo "[entrypoint-wrapper] Starting Meridian proxy on port 3456..."
+meridian &
 
 sleep 2
 
@@ -24,11 +24,11 @@ if [ ! -f "$CONFIG_FILE" ]; then
     openclaw config set gateway.auth.token "$OPENCLAW_GATEWAY_TOKEN"
   fi
 
-  # Configure custom provider pointing to claude-max-api proxy
-  openclaw config set models.providers.clawd '{"baseUrl":"http://127.0.0.1:3456/v1","apiKey":"not-needed","api":"openai-completions","models":[{"id":"claude-sonnet-4","name":"Claude Sonnet 4","reasoning":false,"input":["text"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":200000,"maxTokens":8192},{"id":"claude-opus-4","name":"Claude Opus 4","reasoning":false,"input":["text"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":200000,"maxTokens":8192},{"id":"claude-haiku-4","name":"Claude Haiku 4","reasoning":false,"input":["text"],"cost":{"input":0,"output":0,"cacheRead":0,"cacheWrite":0},"contextWindow":200000,"maxTokens":8192}]}' --strict-json
-  openclaw config set agents.defaults.model.primary "clawd/claude-sonnet-4"
+  # Point Anthropic provider to Meridian
+  openclaw config set models.providers.anthropic '{"baseUrl":"http://127.0.0.1:3456","apiKey":"not-needed","api":"anthropic-messages","models":[]}' --strict-json
+  openclaw config set agents.defaults.model.primary "anthropic/claude-sonnet-4-6"
 
-  echo "[entrypoint-wrapper] Onboard complete (claude-max-api proxy configured)"
+  echo "[entrypoint-wrapper] Onboard complete (Meridian proxy configured)"
 fi
 
 # Run the gateway in foreground, keep proxy alive via trap
