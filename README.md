@@ -1,15 +1,24 @@
-# OpenClaw + Claude CLI + Billing Proxy
+# OpenClaw + Claude Max Proxy
 
-Docker image extending [alpine/openclaw](https://hub.docker.com/r/alpine/openclaw) with [Claude Code CLI](https://github.com/anthropics/claude-code) and a [billing proxy](https://github.com/zacdcook/openclaw-billing-proxy) to use your Claude Max/Pro subscription with OpenClaw.
+Docker image extending [alpine/openclaw](https://hub.docker.com/r/alpine/openclaw) with a built-in proxy that routes OpenClaw requests through your Claude Max subscription — no Extra Usage billing.
 
 ## Why?
 
-After Anthropic revoked subscription billing for third-party tools (April 2026), OpenClaw requests are billed to Extra Usage. This image includes a local proxy that routes API requests through your Claude Code subscription instead.
+Anthropic revoked subscription billing for third-party tools (April 2026). OpenClaw requests are now billed to Extra Usage. This image includes a lightweight proxy that spawns the Claude Code CLI directly for each request, leveraging native client attestation. Your Max subscription handles the billing.
 
-It also:
-- Bakes Claude CLI into the image (persists across restarts)
-- Runs as non-root user (uid 1000), required by Claude CLI
-- Auto-configures gateway, auth, and proxy on first launch
+## How It Works
+
+```
+OpenClaw (gateway)
+    |
+Proxy (:3456) — sanitizes request, spawns `claude -p <prompt>`
+    |
+Claude Code CLI — handles OAuth, attestation, API call
+    |
+Anthropic API — sees a standard Claude Code request
+```
+
+Single Node.js proxy (~200 lines), no external dependencies beyond Claude CLI itself.
 
 ## Quick Start
 
@@ -19,7 +28,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Then authenticate Claude CLI (one-time):
+Authenticate Claude CLI (one-time):
 
 ```bash
 docker exec -it <container-name> claude
@@ -32,13 +41,6 @@ docker compose restart
 ```
 
 The Control UI is available at `http://localhost:18789/#token=YOUR_TOKEN`.
-
-## How It Works
-
-1. **Billing proxy** starts on port 18801 inside the container
-2. OpenClaw's Anthropic provider is configured to use `http://127.0.0.1:18801` instead of `https://api.anthropic.com`
-3. The proxy injects Claude Code's billing identifier and OAuth token into API requests
-4. Anthropic sees a Claude Code request — billed to your subscription, not Extra Usage
 
 ## Docker Compose
 
@@ -85,7 +87,7 @@ This project is provided **for educational and research purposes only**. It is a
 By using this software, you acknowledge that:
 
 - **You are solely responsible** for your use of this project and for ensuring compliance with Anthropic's [Terms of Service](https://www.anthropic.com/terms) and [Acceptable Use Policy](https://www.anthropic.com/aup).
-- The billing proxy modifies API request routing. Anthropic may change their billing, detection, or authentication mechanisms at any time, which could render this tool non-functional or result in account restrictions.
+- Anthropic may change their billing, detection, or authentication mechanisms at any time, which could render this tool non-functional or result in account restrictions.
 - The author(s) of this project **accept no liability** for any damages, account suspensions, billing issues, or other consequences resulting from the use of this software.
 - This project is provided "as is", without warranty of any kind, express or implied.
 
@@ -94,4 +96,3 @@ By using this software, you acknowledge that:
 ## Credits
 
 - [alpine/openclaw](https://hub.docker.com/r/alpine/openclaw) — Base OpenClaw image
-- [openclaw-billing-proxy](https://github.com/zacdcook/openclaw-billing-proxy) — Billing proxy by @zacdcook
