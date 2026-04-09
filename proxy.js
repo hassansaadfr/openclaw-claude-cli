@@ -113,7 +113,7 @@ function handleRequest(req, res) {
       '-p', prompt,
       '--output-format', 'text',
       '--model', cliModel(model),
-      '--max-turns', '10',
+      '--max-turns', '100',
       '--no-session-persistence',
     ];
 
