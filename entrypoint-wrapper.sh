@@ -4,8 +4,12 @@ set -e
 CONFIG_DIR="${OPENCLAW_STATE_DIR:-/home/node/.openclaw}"
 CONFIG_FILE="$CONFIG_DIR/openclaw.json"
 
-# Start proxy
-echo "[entrypoint-wrapper] Starting Claude Max proxy on port 3456..."
+# Start Meridian on port 3457
+echo "[entrypoint-wrapper] Starting Meridian on port 3457..."
+MERIDIAN_PORT=3457 meridian &
+
+# Start sanitize proxy on port 3456 (forwards to Meridian on 3457)
+echo "[entrypoint-wrapper] Starting sanitize proxy on port 3456..."
 node /opt/proxy.js &
 
 sleep 2
@@ -24,7 +28,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     openclaw config set gateway.auth.token "$OPENCLAW_GATEWAY_TOKEN"
   fi
 
-  # Point Anthropic provider to proxy
+  # Point Anthropic provider to sanitize proxy
   openclaw config set models.providers.anthropic '{"baseUrl":"http://127.0.0.1:3456","apiKey":"not-needed","api":"anthropic-messages","models":[]}' --strict-json
   openclaw config set agents.defaults.model.primary "anthropic/claude-sonnet-4-6"
 

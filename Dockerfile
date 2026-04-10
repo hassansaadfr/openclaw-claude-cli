@@ -2,13 +2,13 @@ FROM alpine/openclaw:latest
 
 USER root
 
-# Install Claude Code CLI and keyring for credential persistence
+# Install Claude Code CLI, Meridian, and keyring for credential persistence
 RUN apt-get update && \
     apt-get install -y --no-install-recommends libsecret-1-0 dbus gnome-keyring && \
     rm -rf /var/lib/apt/lists/* && \
-    npm install -g @anthropic-ai/claude-code
+    npm install -g @anthropic-ai/claude-code @rynfar/meridian
 
-# Add proxy and entrypoint
+# Add sanitize proxy and entrypoint
 COPY proxy.js /opt/proxy.js
 COPY entrypoint-wrapper.sh /usr/local/bin/entrypoint-wrapper.sh
 RUN chmod +x /usr/local/bin/entrypoint-wrapper.sh
