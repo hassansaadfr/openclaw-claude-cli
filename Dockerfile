@@ -17,8 +17,10 @@ COPY entrypoint-wrapper.sh /usr/local/bin/entrypoint-wrapper.sh
 RUN chmod +x /usr/local/bin/entrypoint-wrapper.sh
 
 # Ensure data directories exist with correct permissions for non-root user
-RUN mkdir -p /data/uv /data/go /data/workspace /data/.openclaw /home/node/.claude /home/node/.local/share/keyrings && \
-    chown -R 1000:1000 /data /home/node
+# Symlink /data -> /home/node so old paths (/data/.openclaw, /data/openclaw-conf-repo, etc.) still work
+RUN rm -rf /data && ln -s /home/node /data && \
+    mkdir -p /home/node/.openclaw /home/node/.claude /home/node/.local/share/keyrings && \
+    chown -R 1000:1000 /home/node
 
 # Run as non-root user (required by Claude CLI --dangerously-skip-permissions)
 USER 1000:1000
